@@ -1,0 +1,46 @@
+def solution(message, spoiler_ranges):
+    
+    curr_spoiler = [0] * len(message)
+    
+    for start, end in spoiler_ranges:
+        curr_spoiler[start:end+1] = [1] * (end - start + 1)
+    
+    word_set = set()
+    word_stack = []
+    spoilered = 0
+    word_idx = 0
+    
+    for idx, char in enumerate(message):
+        if char == " ":
+            if spoilered == 0:
+                word_set.add("".join(word_stack))
+            word_stack = []
+            spoilered = 0
+        else:
+            if curr_spoiler[idx] == 1:
+                spoilered = 1
+            word_stack.append(char)
+    else:
+        if spoilered == 0:
+            word_set.add("".join(word_stack))
+                    
+                
+    # print(word_set)
+    answer = 0
+    for start, end in spoiler_ranges:
+        word_stack = message[start:end + 1]
+        # print(type(message[start]))
+        while not (start == 0 or message[start - 1] == " "):
+            word_stack = message[start - 1] + word_stack
+            start -= 1
+        while not (end == (len(message) - 1) or message[end + 1] == " "):
+            word_stack = word_stack + message[end + 1]
+            end += 1
+        word_list = word_stack.split()
+        # print(word_list)
+        for word in word_list:
+            if word not in word_set:
+                answer += 1
+                word_set.add(word)
+            
+    return answer
